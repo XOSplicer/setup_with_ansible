@@ -3,8 +3,9 @@
   hosts: 127.0.0.1
   connection: local
   vars:
-    home: "/home/felix"
+    username: felix
   tasks:
+
   - name: Install basic packages
     apt: pkg="{{ item }}" state=present update_cache=true
     become: true
@@ -20,8 +21,35 @@
       - tmux
       - git
       - build-essential
-  - name: Get dotfiles from GtiHub
-    git:
-      repo: git@github.com:xosplicer/dotfiles.git
-      dest: "{{ home }}" 
+      - gcc
+      - python3.6
+
+  - name: Clone oh-my-zsh
+    tags:
+      # Suppress warning: [ANSIBLE0006] git used in place of git module
+      # Git module doesn't allow us to set `core.autocrlf=input`.
+      - skip_ansible_lint
+    # core.autocrlf=input prevents https://github.com/robbyrussell/oh-my-zsh/issues/4402
+    command: "git clone -c core.autocrlf=input --depth=1 https://github.com/robbyrussell/oh-my-zsh.git ~{{ username }}/.oh-my-zsh"
+    args:
+      creates: "~{{ username }}/.oh-my-zsh"
+
+  - name: Set default shell
+    become: true
+    user: name="{{ username }}" shell=/bin/zsh
+
+  - name: Install rustup
+    shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+    args:
+      creates: "~{{ username }}/.rustup"
+
+  - name: Install Rust nightly
+    shell: "rustup install nightly"
+
+  - name: Install basic GUI programms
+    apt: pkg="{{ item }}" state=present update_cache=true
+    become: true
+    with_items:
+      - firefox
+      - chromium-browser
 
