@@ -6,7 +6,7 @@
     username: felix
   tasks:
 
-  - name: Install basic packages
+  - name: Install basic programms and libraries
     apt: pkg="{{ item }}" state=present update_cache=true
     become: true
     with_items:
@@ -24,7 +24,9 @@
       - build-essential
       - gcc
       - g++
+      - python2.7
       - python3.6
+      - python-pip
       - openjdk-8-jdk
       - openjdk-8-jre
       - htop
@@ -60,11 +62,17 @@
       - tree
       - unzip
       - vagrant
+      - valgrind
       - avra
       - avrdude
       - avr-libc
       - binutils-avr
       - gcc-avr
+      - libssl-dev
+      - pkg-config
+      - cmake
+      - zlib1g-dev
+
 
   - name: Clone oh-my-zsh
     tags:
@@ -90,6 +98,7 @@
     become: true
     user: name="{{ username }}" shell=/bin/zsh
 
+
   - name: Install rustup
     shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none"
     args:
@@ -106,6 +115,29 @@
 
   - name: Install Rust wasm target
     shell: "rustup target add wasm32-unknown-unknown --toolchain nightly"
+
+
+  # This compiles from source and can take some time
+  - name: Install cargo programms
+    shell: "cargo install {{ item }}"
+    args:
+      creates: "~{{ username }}/.cargo/bin/{{item}}"
+    with_items:
+      - cargo-add
+      - cargo-audit
+      - cargo-deb
+      - cargo-profiler
+      - comment-strip
+      - exa
+      - racer
+      - xargo
+
+  # This compiles from source and can take some time
+  - name: Install cargo tarpaulin
+    shell: 'RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin'
+    args:
+      creates: "~{{ username }}/.cargo/bin/cargo-tarpaulin"
+
 
   - name: Fix user groups for docker and ttys
     become: true
@@ -124,6 +156,7 @@
       force: false
       mode: 0755
     become: true
+
 
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
@@ -149,6 +182,7 @@
       - wireshark
       # - deja-dub
 
+
   - name: Check if VS Code is installed
     command: dpkg-query -W code
     register: code_deb
@@ -165,6 +199,7 @@
     apt: deb="/tmp/code.deb"
     become: true
     when: code_deb.rc == 1
+
 
   - name: Check if Gitkraken is installed
     command: dpkg-query -W gitkraken
