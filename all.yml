@@ -23,6 +23,8 @@
       - build-essential
       - gcc
       - python3.6
+      - openjdk-8-jdk
+      - openjdk-8-jre
 
   - name: Clone oh-my-zsh
     tags:
@@ -72,6 +74,10 @@
       - firefox
       - thunderbird
       - chromium-browser
+      - pinta
+      - transmission
+      - transmission-cli
+      - zenmap
 
   - name: Check if VS Code is installed
     command: dpkg-query -W code
@@ -89,6 +95,23 @@
     apt: deb="/tmp/code.deb"
     become: true
     when: code_deb.rc == 1
+
+  - name: Check if Gitkraken is installed
+    command: dpkg-query -W gitkraken
+    register: gitkraken_deb
+    failed_when: gitkraken_deb.rc > 1
+    changed_when: gitkraken_deb.rc == 1
+
+  - name: Download Gitkraken
+    get_url:
+      url: "https://release.gitkraken.com/linux/gitkraken-amd64.deb"
+      dest: "/tmp/gitkraken.deb"
+    when: gitkraken_deb.rc == 1
+
+  - name: Install Gitkraken
+    apt: deb="/tmp/gitkraken.deb"
+    become: true
+    when: gitkraken_deb.rc == 1
 
 
   - name: Check if Steam is installed
