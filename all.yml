@@ -107,6 +107,24 @@
   - name: Install Rust wasm target
     shell: "rustup target add wasm32-unknown-unknown --toolchain nightly"
 
+  - name: Fix user groups for docker and ttys
+    become: true
+    user:
+      name: "{{ username }}"
+      groups:
+        - docker
+        - dialout
+      append: true
+
+
+  - name: Install docker-compose
+    get_url:
+      url: "https://github.com/docker/compose/releases/download/1.21.2/docker-compose-Linux-x86_64"
+      dest: "/usr/local/bin/docker-compose"
+      force: false
+      mode: 0755
+    become: true
+
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
     become: true
