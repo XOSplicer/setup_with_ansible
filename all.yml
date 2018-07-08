@@ -25,6 +25,10 @@
       - python3.6
       - openjdk-8-jdk
       - openjdk-8-jre
+      - htop
+      - mtr-tiny
+      - parted
+      - imagemagick
 
   - name: Clone oh-my-zsh
     tags:
@@ -75,9 +79,19 @@
       - thunderbird
       - chromium-browser
       - pinta
+      - gimp
+      - inkscape
       - transmission
       - transmission-cli
       - zenmap
+      - filezilla
+      - darktable
+      - wine1.6
+      - playonlinux
+      - netbeans
+      - gparted
+      - vlc
+      - wireshark
 
   - name: Check if VS Code is installed
     command: dpkg-query -W code
