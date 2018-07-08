@@ -181,6 +181,7 @@
       - vlc
       - wireshark
       # - deja-dub
+      - libreoffice
 
 
   - name: Check if VS Code is installed
