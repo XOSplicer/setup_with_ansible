@@ -34,6 +34,16 @@
     args:
       creates: "~{{ username }}/.oh-my-zsh"
 
+  - name: Clone zsh-autosuggestions
+    git:
+      repo: "https://github.com/zsh-users/zsh-autosuggestions.git"
+      dest: "~{{ username }}/.oh-my-zsh/custom/plugins/zsh-autosuggestions"
+
+  - name: Clone zsh-syntax-highlightling
+    git:
+      repo: "https://github.com/zsh-users/zsh-syntax-highlighting.git"
+      dest:  "~{{ username }}/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting"
+
   - name: Set default shell
     become: true
     user: name="{{ username }}" shell=/bin/zsh
@@ -60,6 +70,7 @@
     become: true
     with_items:
       - firefox
+      - thunderbird
       - chromium-browser
 
   - name: Check if VS Code is installed
