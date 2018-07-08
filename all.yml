@@ -20,8 +20,10 @@
       - ntp
       - tmux
       - git
+      - subversion
       - build-essential
       - gcc
+      - g++
       - python3.6
       - openjdk-8-jdk
       - openjdk-8-jre
@@ -29,6 +31,35 @@
       - mtr-tiny
       - parted
       - imagemagick
+      - ant
+      - gradle
+      - maven
+      - autoconf
+      - automake
+      - make
+      - ruby
+      - scala
+      - clang
+      - clisp
+      - cmake
+      - cmatrix
+      - cowsay
+      - cowsay-off
+      - docker.io
+      - erlang-base
+      - ffmpeg
+      - findbugs
+      - fortunes
+      - fortunes-off
+      - httpie
+      - iftop
+      - iotop
+      - mono-runtime
+      - neofetch
+      - nmap
+      - tree
+      - unzip
+      - vagrant
 
   - name: Clone oh-my-zsh
     tags:
@@ -87,11 +118,13 @@
       - filezilla
       - darktable
       - wine1.6
+      - winetricks
       - playonlinux
       - netbeans
       - gparted
       - vlc
       - wireshark
+      # - deja-dub
 
   - name: Check if VS Code is installed
     command: dpkg-query -W code
