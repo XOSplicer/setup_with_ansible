@@ -39,12 +39,21 @@
     user: name="{{ username }}" shell=/bin/zsh
 
   - name: Install rustup
-    shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
+    shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none"
     args:
       creates: "~{{ username }}/.rustup"
 
+  - name: Install Rust stable
+    shell: "rustup install stable"
+
   - name: Install Rust nightly
     shell: "rustup install nightly"
+
+  - name: Update Rust
+    shell: "rustup update"
+
+  - name: Install Rust wasm target
+    shell: "rustup target add wasm32-unknown-unknown --toolchain nightly"
 
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
@@ -53,3 +62,23 @@
       - firefox
       - chromium-browser
 
+  - name: Check if VS Code is installed
+    command: dpkg-query -W code
+    register: code_deb
+    failed_when: code_deb.rc > 1
+    changed_when: code_deb.rc == 1
+
+  - name: Download VS Code
+    get_url:
+      url: "https://go.microsoft.com/fwlink/?LinkID=760868"
+      dest: "/tmp/code.deb"
+    when: code_deb.rc == 1
+
+  - name: Install VS Code
+    apt: deb="/tmp/code.deb"
+    become: true
+    when: code_deb.rc == 1
+
+  - name: Fix apt dependencies
+    shell: "apt-get --fix-broken install"
+    become: true
