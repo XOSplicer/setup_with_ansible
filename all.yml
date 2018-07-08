@@ -60,6 +60,11 @@
       - tree
       - unzip
       - vagrant
+      - avra
+      - avrdude
+      - avr-libc
+      - binutils-avr
+      - gcc-avr
 
   - name: Clone oh-my-zsh
     tags:
