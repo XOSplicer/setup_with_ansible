@@ -180,7 +180,7 @@
       - gparted
       - vlc
       - wireshark
-      # - deja-dub
+      - deja-dup
       - libreoffice
 
 
