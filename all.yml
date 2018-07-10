@@ -73,6 +73,8 @@
       - cmake
       - zlib1g-dev
       - command-not-found
+      - fonts-lmodern
+      - fonts-open-sans
 
 
   - name: Clone oh-my-zsh
@@ -185,6 +187,40 @@
       update_cache: true
       install_recommends: false
     become: true
+
+
+  - name: Create font directory
+    file:
+      path: "~{{ username }}/.local/share/fonts"
+      state: directory
+      mode: 0755
+
+  - name: Install Fira Code font
+    get_url:
+      url: "https://github.com/tonsky/FiraCode/blob/master/distr/ttf/FiraCode-{{ item }}.ttf?raw=true"
+      dest: "~{{ username }}/.local/share/fonts/FiraCode-{{ item }}.ttf"
+      force: false
+    with_items:
+      - Bold
+      - Light
+      - Medium
+      - Regular
+      - Retina
+
+
+  - name: Install Source Code Pro
+    get_url:
+      url: "https://github.com/adobe-fonts/source-code-pro/releases/download/variable-fonts/SourceCodeVariable-{{ item }}.ttf"
+      dest: "~{{ username }}/.local/share/fonts/SourceCodeVariable-{{ item }}.ttf"
+      force: false
+    with_items:
+      - Roman
+      - Italic
+
+  - name: Update font cache
+    shell: "fc-cache -f"
+    become: true
+
 
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
