@@ -72,6 +72,7 @@
       - pkg-config
       - cmake
       - zlib1g-dev
+      - command-not-found
 
 
   - name: Clone oh-my-zsh
@@ -157,6 +158,33 @@
       mode: 0755
     become: true
 
+
+  - name: Clone nvm
+    git:
+      repo: "https://github.com/creationix/nvm.git"
+      dest:  "~{{ username }}/.nvm/"
+
+  - name: Install node latest lts
+    shell: 'export NVM_DIR="$HOME/.nvm"; echo "NVM_DIR: $NVM_DIR"; [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"; echo "NVM LOADED"; nvm install 8 --lts --latest-npm --no-progress;'
+
+  - name: Add yarn apt key
+    apt_key:
+      url: "https://dl.yarnpkg.com/debian/pubkey.gpg"
+    become: true
+
+  - name: Add yarn repo list
+    copy:
+      content: "deb https://dl.yarnpkg.com/debian/ stable main"
+      dest: /etc/apt/sources.list.d/yarn.list
+    become: true
+
+  - name: Install yarn
+    apt:
+      pkg: "yarn"
+      state: present
+      update_cache: true
+      install_recommends: false
+    become: true
 
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
