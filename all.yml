@@ -113,12 +113,19 @@
   - name: Install Rust nightly
     shell: "rustup install nightly"
 
-  - name: Update Rust
-    shell: "rustup update"
-
   - name: Install Rust wasm target
     shell: "rustup target add wasm32-unknown-unknown --toolchain nightly"
 
+  - name: Install Rust components
+    shell: "rustup component add {{ item}}"
+    with_items:
+       - rls-preview
+       - rust-analysis
+       - rust-src
+       - rustfmt-preview
+
+  - name: Update Rust
+    shell: "rustup update"
 
   # This compiles from source and can take some time
   - name: Install cargo programms
