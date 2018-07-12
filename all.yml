@@ -75,6 +75,12 @@
       - command-not-found
       - fonts-lmodern
       - fonts-open-sans
+      - texlive
+      - texlive-base
+      - latexmk
+      - biber
+      - texlive-bibtex-extra
+      - texlive-lang-german
 
 
   - name: Clone oh-my-zsh
@@ -157,7 +163,6 @@
         - docker
         - dialout
       append: true
-
 
   - name: Install docker-compose
     get_url:
