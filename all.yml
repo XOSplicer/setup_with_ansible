@@ -314,6 +314,24 @@
     when: steam_deb.rc == 1
 
 
+  - name: Create optional and optional binary directory
+    file:
+      path: "~{{ username }}/.opt/bin"
+      state: directory
+      mode: 0755
+
+  - name: Install archillect load
+    git:
+      repo: "git@github.com:XOSplicer/archillect-load.git"
+      dest: "~{{ username }}/.opt/archillect-load"
+
+  - name: Link archillect load
+    file:
+      path: "~{{ username }}/.opt/bin/archillect-bg"
+      src: "~{{ username }}/.opt/archillect-load/run_feh.sh"
+      state: link
+
+
   - name: Fix apt dependencies
     shell: "apt-get --fix-broken install"
     become: true
