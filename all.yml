@@ -234,6 +234,28 @@
     become: true
 
 
+  - name: Create icons directory
+    file:
+      path: "~{{ username }}/.icons"
+      state: directory
+      mode: 0755
+
+  - name: Check if Flat Remix icons are present
+    stat:
+      path: "~{{ username }}/.icons/Flat-Remix"
+    register: flat_remix
+
+  - name: Clone Flat Remix icons
+    git:
+      repo: "https://github.com/daniruiz/flat-remix.git"
+      dest: "/tmp/flat-remix"
+    when: flat_remix.stat.exists == False
+
+  - name: Install Flat Remix icons
+    shell: "cp -r /tmp/flat-remix/Flat-Remix* ~{{ username }}/.icons/"
+    when: flat_remix.stat.exists == False
+
+
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
     become: true
