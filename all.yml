@@ -308,8 +308,8 @@
       - wireshark
       - deja-dup
       - libreoffice
-      - file-roller
       - rofi
+      - xarchiver
 
 
   - name: Check if VS Code is installed
