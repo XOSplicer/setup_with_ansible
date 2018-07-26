@@ -256,6 +256,33 @@
     when: flat_remix.stat.exists == False
 
 
+  - name: Create themes directory
+    file:
+      path: "~{{ username }}/.themes"
+      state: directory
+      mode: 0755
+
+  - name: Clone Flatabulous theme
+    git:
+      repo: "https://github.com/anmoljagetia/Flatabulous.git"
+      dest: "~{{ username }}/.themes/Flatabulous"
+
+  - name: Clone X-Arc-Darker theme
+    git:
+      repo: "https://gitlab.com/LinxGem33/X-Arc-Darker.git"
+      dest: "~{{ username }}/.themes/X-Arc-Darker"
+
+  - name: Clone X-Arc-White theme
+    git:
+      repo: "https://gitlab.com/LinxGem33/X-Arc-White.git"
+      dest: "~{{ username }}/.themes/X-Arc-White"
+
+  - name: Install other themes
+    apt: pkg="{{ item }}" state=present update_cache=true
+    become: true
+    with_items:
+      - arc-theme
+
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
     become: true
@@ -280,6 +307,7 @@
       - wireshark
       - deja-dup
       - libreoffice
+      - file-roller
 
 
   - name: Check if VS Code is installed
