@@ -308,6 +308,7 @@
       - deja-dup
       - libreoffice
       - file-roller
+      - rofi
 
 
   - name: Check if VS Code is installed
