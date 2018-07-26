@@ -282,6 +282,7 @@
     become: true
     with_items:
       - arc-theme
+      - dmz-cursor-theme
 
   - name: Install basic GUI programms
     apt: pkg="{{ item }}" state=present update_cache=true
