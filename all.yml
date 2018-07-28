@@ -109,21 +109,21 @@
 
 
   - name: Install rustup
-    shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain none"
+    shell: "curl https://sh.rustup.rs -sSf | sh -s -- -y"
     args:
       creates: "~{{ username }}/.rustup"
 
   - name: Install Rust stable
-    shell: "rustup install stable"
+    shell: "~{{ username }}/.cargo/bin/rustup install stable"
 
   - name: Install Rust nightly
-    shell: "rustup install nightly"
+    shell: "~{{ username }}/.cargo/bin/rustup install nightly"
 
   - name: Install Rust wasm target
-    shell: "rustup target add wasm32-unknown-unknown --toolchain nightly"
+    shell: "~{{ username }}/.cargo/bin/rustup target add wasm32-unknown-unknown --toolchain nightly"
 
   - name: Install Rust components
-    shell: "rustup component add {{ item}}"
+    shell: "~{{ username }}/.cargo/bin/rustup component add {{ item}}"
     with_items:
        - rls-preview
        - rust-analysis
@@ -131,11 +131,11 @@
        - rustfmt-preview
 
   - name: Update Rust
-    shell: "rustup update"
+    shell: "~{{ username }}/.cargo/bin/rustup update"
 
   # This compiles from source and can take some time
   - name: Install cargo programms
-    shell: "cargo install {{ item }}"
+    shell: "~{{ username }}/.cargo/bin/cargo install {{ item }}"
     args:
       creates: "~{{ username }}/.cargo/bin/{{item}}"
     with_items:
@@ -145,12 +145,18 @@
       - cargo-profiler
       - comment-strip
       - exa
-      - racer
       - xargo
+
+  - name: Install nightly cargo programs
+    shell: "~{{ username }}/.cargo/bin/cargo +nightly install {{ item }}"
+    args:
+      creates: "~{{ username }}/.cargo/bin/{{item}}"
+    with_items:
+      - racer
 
   # This compiles from source and can take some time
   - name: Install cargo tarpaulin
-    shell: 'RUSTFLAGS="--cfg procmacro2_semver_exempt" cargo install cargo-tarpaulin'
+    shell: 'RUSTFLAGS="--cfg procmacro2_semver_exempt" ~{{ username }}/.cargo/bin/cargo install cargo-tarpaulin'
     args:
       creates: "~{{ username }}/.cargo/bin/cargo-tarpaulin"
 

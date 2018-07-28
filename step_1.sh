@@ -16,5 +16,5 @@ cd ~
 git init
 git remote add origin $URL || true
 git fetch
-git checkout --track -B master origin/master
+git checkout --track -B master origin/master --force
 
