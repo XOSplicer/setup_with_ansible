@@ -81,7 +81,14 @@
       - biber
       - texlive-bibtex-extra
       - texlive-lang-german
-
+      - libpq5
+      - libpq-dev
+      - libmysqlclient20
+      - libmysqlclient-dev
+      - libsqlite3-0
+      - libsqlite3-dev
+      - luajit
+      - ytnef-tools
 
   - name: Clone oh-my-zsh
     tags:
@@ -123,7 +130,7 @@
     shell: "~{{ username }}/.cargo/bin/rustup target add wasm32-unknown-unknown --toolchain nightly"
 
   - name: Install Rust components
-    shell: "~{{ username }}/.cargo/bin/rustup component add {{ item}}"
+    shell: "~{{ username }}/.cargo/bin/rustup component add {{ item }}"
     with_items:
        - rls-preview
        - rust-analysis
@@ -137,7 +144,7 @@
   - name: Install cargo programms
     shell: "~{{ username }}/.cargo/bin/cargo install {{ item }}"
     args:
-      creates: "~{{ username }}/.cargo/bin/{{item}}"
+      creates: "~{{ username }}/.cargo/bin/{{ item }}"
     with_items:
       - cargo-add
       - cargo-audit
@@ -154,9 +161,14 @@
     with_items:
       - racer
 
+  - name: Install diesel_cli
+    shell: "~{{ username }}/.cargo/bin/cargo install diesel_cli"
+    args:
+      creates: "~{{ username }}/.cargo/bin/diesel"
+
   # This compiles from source and can take some time
   - name: Install cargo tarpaulin
-    shell: 'RUSTFLAGS="--cfg procmacro2_semver_exempt" ~{{ username }}/.cargo/bin/cargo install cargo-tarpaulin'
+    shell: 'RUSTFLAGS="--cfg procmacro2_semver_exempt" ~{{ username }}/.cargo/bin/cargo +nightly install cargo-tarpaulin'
     args:
       creates: "~{{ username }}/.cargo/bin/cargo-tarpaulin"
 
@@ -389,6 +401,20 @@
       src: "~{{ username }}/.opt/archillect-load/run_feh.sh"
       state: link
 
+  - name: Clone wrk
+    git:
+      repo: "https://github.com/wg/wrk.git"
+      dest: "~{{ username }}/.opt/wrk"
+
+  - name: Compile wrk
+    make:
+      chdir: "~{{ username }}/.opt/wrk"
+
+  - name: Link wrk
+    file:
+      path: "~{{ username }}/.opt/bin/wrk"
+      src: "~{{ username }}/.opt/wrk/wrk"
+      state: link
 
   - name: Fix apt dependencies
     shell: "apt-get --fix-broken install"
