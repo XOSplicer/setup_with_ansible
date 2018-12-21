@@ -89,6 +89,7 @@
       - libsqlite3-dev
       - luajit
       - ytnef-tools
+      - powertop
 
   - name: Clone oh-my-zsh
     tags:
@@ -136,6 +137,7 @@
        - rust-analysis
        - rust-src
        - rustfmt-preview
+       - clippy
 
   - name: Update Rust
     shell: "~{{ username }}/.cargo/bin/rustup update"
