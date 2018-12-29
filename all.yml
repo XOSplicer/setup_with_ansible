@@ -90,6 +90,9 @@
       - luajit
       - ytnef-tools
       - powertop
+      - gdb-multiarch
+      - minicom
+      - openocd
 
   - name: Clone oh-my-zsh
     tags:
@@ -130,6 +133,9 @@
   - name: Install Rust wasm target
     shell: "~{{ username }}/.cargo/bin/rustup target add wasm32-unknown-unknown --toolchain nightly"
 
+  - name: Install Rust thumbv7em-none-eabihf target
+    shell: "~{{ username }}/.cargo/bin/rustup target add thumbv7em-none-eabihf"
+
   - name: Install Rust components
     shell: "~{{ username }}/.cargo/bin/rustup component add {{ item }}"
     with_items:
@@ -138,6 +144,7 @@
        - rust-src
        - rustfmt-preview
        - clippy
+       - llvm-tools-preview
 
   - name: Update Rust
     shell: "~{{ username }}/.cargo/bin/rustup update"
@@ -168,11 +175,43 @@
     args:
       creates: "~{{ username }}/.cargo/bin/diesel"
 
-  # This compiles from source and can take some time
   - name: Install cargo tarpaulin
     shell: 'RUSTFLAGS="--cfg procmacro2_semver_exempt" ~{{ username }}/.cargo/bin/cargo +nightly install cargo-tarpaulin'
     args:
       creates: "~{{ username }}/.cargo/bin/cargo-tarpaulin"
+
+  - name: Install itmdump
+    shell: "~{{ username }}/.cargo/bin/cargo install itm --vers 0.3.1"
+    args:
+      creates: "~{{ username }}/.cargo/bin/itmdump"
+
+  - name: Install cargo binutils
+    shell: "~{{ username }}/.cargo/bin/cargo install cargo-binutils --vers 0.1.4"
+    args:
+      creates: "~{{ username }}/.cargo/bin/cargo-size"
+
+  - name: Set udev rules for USB to Serial
+    become: true
+    copy:
+      dest: "/etc/udev/rules.d/99-ftdi.rules"
+      content: |
+        # FT232 - USB <-> Serial Converter
+        ATTRS{idVendor}=="0403", ATTRS{idProduct}=="6001", MODE:="0666"
+
+  - name: Set udev rules for openocd
+    become: true
+    copy:
+      dest: "/etc/udev/rules.d/99-openocd.rules"
+      owner: root
+      content: |
+        # STM32F3DISCOVERY rev A/B - ST-LINK/V2
+        ATTRS{idVendor}=="0483", ATTRS{idProduct}=="3748", MODE:="0666"
+        # STM32F3DISCOVERY rev C+ - ST-LINK/V2-1
+        ATTRS{idVendor}=="0483", ATTRS{idProduct}=="374b", MODE:="0666"
+
+  - name: Reload udev rules
+    become: true
+    shell: "udevadm control --reload-rules"
 
 
   - name: Fix user groups for docker and ttys
@@ -330,6 +369,7 @@
       - libreoffice
       - rofi
       - xarchiver
+      - conky
 
 
   - name: Check if VS Code is installed
