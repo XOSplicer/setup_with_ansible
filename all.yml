@@ -93,6 +93,17 @@
       - gdb-multiarch
       - minicom
       - openocd
+      - pv
+      - iperf
+      - linux-tools-common
+      - moreutils
+      - libasound2
+      - libasound2-dev
+      - musl-tools
+      - pandoc
+      - wkhtmltopdf
+      - libgnome-keyring-common
+      - libgnome-keyring0
 
   - name: Clone oh-my-zsh
     tags:
@@ -129,12 +140,22 @@
 
   - name: Install Rust nightly
     shell: "~{{ username }}/.cargo/bin/rustup install nightly"
+    ignore_errors: true
 
-  - name: Install Rust wasm target
-    shell: "~{{ username }}/.cargo/bin/rustup target add wasm32-unknown-unknown --toolchain nightly"
+  - name: Install Rust additional targets
+    shell: "~{{ username }}/.cargo/bin/rustup target add {{ item }}"
+    with_items:
+      - wasm32-unknown-unknown
+      - thumbv7em-none-eabihf
+      - x86_64-unknown-linux-musl
 
-  - name: Install Rust thumbv7em-none-eabihf target
-    shell: "~{{ username }}/.cargo/bin/rustup target add thumbv7em-none-eabihf"
+  - name: Install Rust additional targets for nightly
+    shell: "~{{ username }}/.cargo/bin/rustup target add --toolchain nightly {{ item }}"
+    with_items:
+      - wasm32-unknown-unknown
+      - thumbv7em-none-eabihf
+      - x86_64-unknown-linux-musl
+    ignore_errors: true
 
   - name: Install Rust components
     shell: "~{{ username }}/.cargo/bin/rustup component add {{ item }}"
@@ -148,6 +169,7 @@
 
   - name: Update Rust
     shell: "~{{ username }}/.cargo/bin/rustup update"
+    ignore_errors: true
 
   # This compiles from source and can take some time
   - name: Install cargo programms
@@ -162,6 +184,8 @@
       - comment-strip
       - exa
       - xargo
+      - bat
+      - wasm-pack
 
   - name: Install nightly cargo programs
     shell: "~{{ username }}/.cargo/bin/cargo +nightly install {{ item }}"
@@ -370,6 +394,7 @@
       - rofi
       - xarchiver
       - conky
+      - gramps
 
 
   - name: Check if VS Code is installed
@@ -447,6 +472,7 @@
     git:
       repo: "https://github.com/wg/wrk.git"
       dest: "~{{ username }}/.opt/wrk"
+      version: "4.1.0"
 
   - name: Compile wrk
     make:
